@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <title>RSSリーダー</title>
+    <link href="/static/css/style.css" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <i class="fa fa-rss fa-lg" style="margin-right: 4px;"></i> <a class="navbar-brand" href="/">RSSリーダー</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/predict"><i class="fa fa-pencil"></i> 予測テスト</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-cog"></i>
+                        設定
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="/json_import">json読み込み</a>
+                        <a class="dropdown-item" href="/json_export">json書き出し</a>
+                    </div>
+                </li>
+
+            </ul>
+            <form action={{url_for('rss')}} method="POST">
+                <button class="btn btn-outline-info my-2 my-sm-0" type="submit">RSS取得</button>
+            </form>&nbsp;
+            <form action={{url_for('fit')}} method="GET">
+                <button class="btn btn-outline-info my-2 my-sm-0" type="submit">学習</button>
+            </form>&nbsp;
+            <form action={{url_for('ramdom')}} method="POST">
+                <button class="btn btn-outline-danger my-2 my-sm-0" type="submit">ランダム再学習</button>
+            </form>
+
+        </div>
+    </nav>
+    {% block content %}
+
+    {% endblock %}
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
+    </script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+    </script>
+    <script>
+        function state(label) {
+            switch (label) {
+                case 0:
+                    html = '<i class="fa fa-star fa-lg c0"></i>'
+                    break;
+                case 1:
+                    html = '<i class="fa fa-times fa-lg c1"></i>'
+                    break;
+                default:
+                    html = '<i class="fa fa-question fa-lg c2"></i>'
+                    break;
+            }
+            return html;
+        }
+
+        function edit(id, label) {
+            var req = new XMLHttpRequest();
+            req.open('POST', "{{url_for('edit')}}", true);
+            req.setRequestHeader('content-type',
+                'application/x-www-form-urlencoded;charset=UTF-8');
+            req.send('id=' + id + '&label=' + label);
+            req.onreadystatechange = function () {
+                if (req.readyState == 4) {
+                    if (req.status == 200) {
+                        html = state(label);
+                        articleState = document.getElementById('state' + id);
+                        articleState.innerHTML = html
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

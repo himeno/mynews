@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="list row">
+        <div class="col-md">
+            <h3>予測テスト</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md">
+            <form action={{url_for('predict')}} method="POST">
+                <div class="form-group">
+                    <textarea class="form-control" name="article"></textarea>
+                </div>
+                <button class="btn btn-outline-info" type="submit">予測テスト</button>
+            </form>
+        </div>
+    </div>
+    <div class="list row">
+        <div class="col-md">
+            {% if result != None %}
+            <h3>結果</h3>
+            <table class="table table-bordered">
+                <tr>
+                    <td>
+                        <p class="lead">{{ result.article }}</p>
+                    </td>
+                    <td>
+                        {% if result.class == 0 %}
+                        肯定的
+                        {% elif result.class == 1 %}
+                        否定的
+                        {% else %}
+                        不明
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

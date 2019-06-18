@@ -1,0 +1,6 @@
+flask
+feedparser
+tensorflow
+numpy==1.16.1
+mysqlclient
+mecab-python3

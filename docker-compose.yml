@@ -1,0 +1,28 @@
+version: '3'
+volumes:
+  volume_db:
+    driver: local
+services:
+  dbhost:
+    image: mysql:5.7
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - volume_db:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: db
+      MYSQL_USER: dbuser
+      MYSQL_PASSWORD: password
+    ports:
+      - '33064:3306'
+  app:
+    build: .
+    ports:
+      - "5000:5000"    
+    volumes:
+      - ./html:/var/www/html
+    command: python app.py
+    depends_on:
+      - dbhost
+    tty: true

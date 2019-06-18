@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="list row">
+        <div class="col-md">
+            <h3>
+                {% if label == 'all' %}
+                全記事一覧
+                {% elif label == 0 %}
+                肯定記事一覧
+                {% else %}
+                否定記事一覧
+                {% endif %}
+            </h3>
+            <ul class="list-inline" style="max-width: 400px;">
+                <li class="list-inline-item"><a href="/" class="btn btn-outline-info {% if label == 'all' %}
+                        active{% endif %}"><i class="fa fa-th-list"></i>
+                        全記事</a>
+                </li>
+                <li class="list-inline-item"><a href="/?label=0" class="btn btn-outline-info {% if label == 0 %}
+                        active{% endif %}"><i class="fa fa-th-list"></i>
+                        肯定的記事</a>
+                </li>
+                <li class="list-inline-item"><a href="/?label=1" class="btn btn-outline-info {% if label == 1 %}
+                        active{% endif %}"><i class="fa fa-th-list"></i>
+                        否定的記事</a>
+                </li>
+            </ul>
+            <table class="table table-bordered table-hover">
+                <tr>
+                    <th style="width:4%;">ID</th>
+                    <th style="width:20%;">状態設定</th>
+                    <th style="width:10%;">状態</th>
+                    <th style="width:10%;">機械予測</th>
+                    <th style="width:56%;">記事（サマリー）</th>
+                </tr>
+                {% for article in articles %}
+                <tr>
+                    <td class="article_id align-middle text-center">{{article[0]}}</td>
+                    <td class="align-middle text-center">
+                        <form action={{url_for('edit')}} method="POST" id="articles{{article[0]}}"
+                            name="articles{{article[0]}}">
+                            <input type='hidden' name="id" value="{{article[0]}}" />
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="label" value=0 {% if article[4] == 0 %} checked
+                                        {% endif %} onchange="edit({{article[0]}},0);">
+                                    肯定
+                                </label>
+                                <label>
+                                    <input type="radio" name="label" value=1 {% if article[4] == 1 %} checked
+                                        {% endif %} onchange="edit({{article[0]}},1);">
+                                    否定
+                                </label>
+                                <label>
+                                    <input type="radio" name="label" value=2 {% if article[4] == 2 %} checked
+                                        {% endif %} onchange="edit({{article[0]}},2);">
+                                    未指定
+                                </label>
+                            </div>
+                        </form>
+                    </td>
+                    <td class="align-middle text-center">
+                        <span id="state{{article[0]}}">
+                            {% if article[4] == 0 %}
+                            <i class="c0 fa fa-star fa-lg"></i>
+                            {% elif article[4] == 1 %}
+                            <i class="c1 fa fa-times fa-lg"></i>
+                            {% else %}
+                            <i class="c2 fa fa-question fa-lg"></i>
+                            {% endif %}
+                        </span>
+                    </td>
+                    <td class="align-middle text-center">
+                        <span>
+                            {% if predict_labels[loop.index - 1] == 0 %}
+                            <i class="c0 fa fa-star fa-lg"></i>
+                            {% elif predict_labels[loop.index - 1] == 1 %}
+                            <i class="c1 fa fa-times fa-lg"></i>
+                            {% else %}
+                            <i class="c2 fa fa-question fa-lg"></i>
+                            {% endif %}
+                        </span>
+                    </td>
+                    <td class="article"><a href="{{article[2]}}" target=_blank>{{article[3]}}</a></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
