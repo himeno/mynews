@@ -1,3 +1,4 @@
+import os
 from flask import *
 import feedparser
 import MySQLdb
@@ -47,7 +48,7 @@ def json_import():
     """
     jsonデータのインポート
     """
-    with open("models/fixtures.json", "r") as f:
+    with open(os.path.dirname(__file__) + "/models/fixtures.json", "r") as f:
         articles = json.loads(f.read())
     db.build_db(True)
     return redirect(request.headers.get("Referer"))
@@ -65,7 +66,7 @@ def json_export():
                  'summary': a[3], 'label': a[4]} for a in articles]
     articles_json = json.dumps(
         articles, sort_keys=True, ensure_ascii=False, indent=2)
-    with open("models/fixtures.json", "w") as f:
+    with open(os.path.dirname(__file__) + "/models/fixtures.json", "w") as f:
         f.write(articles_json)
     return redirect(request.headers.get("Referer"))
 

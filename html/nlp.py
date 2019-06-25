@@ -1,3 +1,4 @@
+import os
 import MeCab
 import pickle
 import collections
@@ -8,10 +9,12 @@ import numpy as np
 
 class Nlp():
     def __init__(self):
-        self.path_model = './models/model.pickle'
-        self.path_dict = './models/dictionary.pickle'
-        self.path_articles = './models/articles.pickle'
-        self.path_labels = './models/labels.pickle'
+        self.path_model = os.path.dirname(__file__) + '/models/model.pickle'
+        self.path_dict = os.path.dirname(
+            __file__) + '/models/dictionary.pickle'
+        self.path_articles = os.path.dirname(
+            __file__) + '/models/articles.pickle'
+        self.path_labels = os.path.dirname(__file__) + '/models/labels.pickle'
         self.max_len = 64
         self.vocab_size = 5000
         self.epochs = 40
@@ -21,6 +24,7 @@ class Nlp():
         """
         予測
         """
+        keras.backend.clear_session()
         dictionary, r_dictionary = self.adjust_dict(self.get_dictionary())
         model = keras.models.load_model(self.path_model)
 
@@ -40,6 +44,7 @@ class Nlp():
         """
         学習
         """
+        keras.backend.clear_session()
 
         dictionary, r_dictionary = self.adjust_dict(dictionary)
 
@@ -215,16 +220,16 @@ if __name__ == '__main__':
     classes = nlp.predict(articles)
     print(classes)
 
-    # from database import Database
-    # db = Database()
-    # nlp = Nlp()
-    # articles = db.get_articles()
-    # articles = [{'id': a[0], 'entry_id':a[1], 'link':a[2],
-    #              'summary':a[3], 'label':a[4]}for a in articles]
-    # nlp.build_dictionary(articles)
-    # dictionary = nlp.get_dictionary()
-    # nlp.build_articles(dictionary, articles)
-    # nlp.build_labels(articles)
-    # labels = nlp.get_labels()
-    # nlp.fit(dictionary, articles, labels)
-    # nlp.encode_article(dictionary, articles[0]['summary'])
+    from database import Database
+    db = Database()
+    nlp = Nlp()
+    articles = db.get_articles()
+    articles = [{'id': a[0], 'entry_id':a[1], 'link':a[2],
+                 'summary':a[3], 'label':a[4]}for a in articles]
+    nlp.build_dictionary(articles)
+    dictionary = nlp.get_dictionary()
+    nlp.build_articles(dictionary, articles)
+    nlp.build_labels(articles)
+    labels = nlp.get_labels()
+    nlp.fit(dictionary, articles, labels)
+#     nlp.encode_article(dictionary, articles[0]['summary'])
